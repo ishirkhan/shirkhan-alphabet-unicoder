@@ -57,23 +57,29 @@ function str2rtl(str: string) {
   );
 }
 
-function firstChar(item: ITableItem) {
-  return String.fromCharCode(item.extend.single);
+function firstChar(currentItem: ITableItem) {
+  return String.fromCharCode(currentItem.extend.first);
 }
 
-function middleChar(item: ITableItem) {
+function middleChar(currentItem: ITableItem, preItem: ITableItem) {
+  if (!preItem) return "";
+
   let result = "";
-  if (item.extend.absent) {
-    result += String.fromCharCode(item.extend.first);
-    result += String.fromCharCode(item.extend.middle);
+  if (preItem.extend.absent) {
+    result += String.fromCharCode(currentItem.extend.middle);
+  } else {
+    result += String.fromCharCode(currentItem.extend.first);
   }
   return result;
 }
-function lastChar(item: ITableItem) {
+function lastChar(currentItem: ITableItem, preItem: ITableItem) {
+  if (!preItem) return "";
+
   let result = "";
-  if (item.extend.absent) {
-    result += String.fromCharCode(item.extend.single);
-    result += String.fromCharCode(item.extend.last);
+  if (preItem.extend.absent) {
+    result += String.fromCharCode(currentItem.extend.last);
+  } else {
+    result += String.fromCharCode(currentItem.extend.single);
   }
   return result;
 }
@@ -84,7 +90,8 @@ function word2extend(word: string) {
 
   let result = "";
   const chars = word.trim().split("");
-  chars.reduce((_, cur: string, index: number, data: string[]) => {
+  chars.reduce((pre: string, cur: string, index: number, data: string[]) => {
+    const preItem = alphaMap[pre];
     const currentItem = alphaMap[cur];
     //只有一个字母
     if (data.length === 1) {
@@ -100,12 +107,12 @@ function word2extend(word: string) {
 
     //最后一个字母
     if (data.length - 1 === index) {
-      result += lastChar(currentItem);
+      result += lastChar(currentItem, preItem);
       return cur;
     }
 
     // 中间的字母
-    result += middleChar(currentItem);
+    result += middleChar(currentItem, preItem);
     return cur;
   }, chars[0]);
 
