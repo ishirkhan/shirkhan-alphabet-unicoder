@@ -46,12 +46,13 @@ export function hex2dec(hex: string) {
 }
 
 export function char2hex(char: string) {
-  var hex = char.charCodeAt(0).toString(16).toUpperCase(),
-    len = 5 - hex.length;
-  if (len > 1) {
-    hex = Array(len).join("0") + hex;
-  }
-  return "0x" + hex;
+  var hex = char
+    .charCodeAt(0)
+    .toString(16)
+    .toUpperCase()
+    .padStart(4, "0")
+    .padStart(6, "0x");
+  return hex;
 }
 
 export function hex2char(hex: string) {
